@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if form %}
+    <form action="./update" method="post">
+
+    {% csrf_token %}
+        {{form}}
+    <input type="submit" value="Done" />
+    </form>
+{%else%}
+    <h3>Nothing to see here</h3>
+{%endif%}
+<br><br><br>
+ <button><a href="{% url 'logout' %}">Logout</a></button>
+</body>
+</html>

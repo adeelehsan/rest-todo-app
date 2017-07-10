@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+{% if todo_list %}
+<ul>
+    <!--var todo_list = {{ todo_list|safe }};-->
+    {% for todo in todo_list%}
+    <li><a href="{{todo.id}}/detail">
+        <h3>{{todo.title}}</h3>
+    </a>
+
+    </li>
+    {% endfor %}
+</ul>
+{%else%}
+<p>To do List is Empty</p>
+{%endif%}
+<!--<button><a href="{% url 'todo:create' %}"> Add Task to List </a></button>-->
+<!--<br><br><br>-->
+<!--<button><a href="{% url 'todo:summary' %}"> View Summary </a></button>-->
+<br><br><br>
+ <!--<button><a href="{% url 'logout' %}">Logout</a></button>-->
+</body>
+</html>
