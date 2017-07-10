@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'todo.User'
-LOGIN_REDIRECT_URL = '/todo'
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/todo/'
 
 # Application definition
 
