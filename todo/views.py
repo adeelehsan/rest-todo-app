@@ -1,4 +1,4 @@
-import json
+from rest_framework.views import APIView
 
 from todo.models import Task, User
 from todo.serializers import UserSerializer
@@ -10,8 +10,9 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 from todo.permissions import IsOwnerOrReadOnly
+from django.db.models import Count
+from datetime import date, timedelta
 
 
 @api_view(['GET'])
@@ -62,27 +63,35 @@ class UserDetail(generics.RetrieveAPIView):
 class RegistrationView(generics.CreateAPIView):
     """ Allow registration of new users. """
     permission_classes = ()
-    # serializer_class = TaskSerializer
+    serializer_class = UserSerializer
 
-    def get_serializer_class(self, **kwargs):
-        if kwargs.get('user'):
-            return UserSerializer
-        return TaskSerializer
+    # def perform_create(self, serializer):
+    #
+    #     if not serializer.is_valid():
+    #         return JsonResponse(serializer.errors,\
+    #                         status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     user = User(username=self.request.data['username'],
+    #                                            password=self.request.data['password'])
+    #     user.save()
+    #     serializer.save(user=user)
+    #     return JsonResponse(serializer.data, status=201)
 
-    def perform_create(self, serializer):
 
-        if not serializer.is_valid():
-            return JsonResponse(serializer.errors,\
-                            status=status.HTTP_400_BAD_REQUEST)
+class SummaryView(APIView):
 
-        # user = User(username=self.request.data['username'],
-        #                                        password=self.request.data['password'])
-        # user.save()
-        self.get_serializer_class(user=True)
-        user = serializer.save()
-        # user_serializer = UserSerializer(data=self.request.data, many=True)
-        # if serializer.is_valid():
-        #     user = serializer.save()
-        self.get_serializer_class()
-        serializer.save(user=user)
-        return JsonResponse(serializer.data, status=201)
+    def get(self, request):
+        user_count = int(request.data.get('user_count', 3))
+        start_date = request.data.get('start_date', '2017-01-01')
+        start_date = start_date.split('-')
+        start_date = date(int(start_date[0]), int(start_date[1]), int(start_date[2]))
+        end_date = request.data.get('end_date')
+        if end_date:
+            end_date = end_date.split('-')
+            end_date = date(int(end_date[0]), int(end_date[1]), int(end_date[2]))
+        else:
+            end_date = date.today()
+        users = User.objects.filter(tasks__status='complete', tasks__completion_date__range=(start_date, end_date)).\
+            annotate(count=Count('tasks')).order_by('-count')
+        userinfo = ['%s has completed %s Tasks' % (user.username, user.count) for user in users[:user_count]]
+        return Response(userinfo)

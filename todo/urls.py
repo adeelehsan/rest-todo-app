@@ -6,6 +6,7 @@ from todo import views
 
 urlpatterns = format_suffix_patterns([
     url(r'^register/$', views.RegistrationView.as_view()),
+    url(r'^summary/$', views.SummaryView.as_view()),
     url(r'^$', views.api_root),
     url(r'^todo/$',
         views.TaskList.as_view(),
