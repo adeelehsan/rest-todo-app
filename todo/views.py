@@ -65,18 +65,6 @@ class RegistrationView(generics.CreateAPIView):
     permission_classes = ()
     serializer_class = UserSerializer
 
-    # def perform_create(self, serializer):
-    #
-    #     if not serializer.is_valid():
-    #         return JsonResponse(serializer.errors,\
-    #                         status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     user = User(username=self.request.data['username'],
-    #                                            password=self.request.data['password'])
-    #     user.save()
-    #     serializer.save(user=user)
-    #     return JsonResponse(serializer.data, status=201)
-
 
 class SummaryView(APIView):
 
