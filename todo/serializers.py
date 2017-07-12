@@ -18,16 +18,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'tasks', 'joining_date')
+        fields = ('url', 'id', 'username', 'password', 'tasks', 'joining_date')
 
     def create(self, validated_data):
         try:
             tasks_data = validated_data.pop('tasks')
             user = User.objects.create(**validated_data)
+            user.set_password(validated_data['password'])
             for task_data in tasks_data:
                 Task.objects.create(user=user, **task_data)
-            return user
         except KeyError:
             user = User.objects.create(**validated_data)
-            user.save()
-            return user
+            user.set_password(validated_data['password'])
+        return user
